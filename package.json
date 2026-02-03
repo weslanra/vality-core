@@ -1,0 +1,39 @@
+{
+  "name": "vality-core",
+  "version": "1.0.0",
+  "description": "Value objects e validações para formulários (CPF, CNPJ, Email, Moeda, DatePicker, etc.)",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "jest",
+    "prepublishOnly": "npm run test -- --silent --no-verbose && npm run build"
+  },
+  "keywords": [
+    "vality",
+    "validation",
+    "cpf",
+    "cnpj",
+    "email",
+    "value-objects",
+    "form",
+    "brazil"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
