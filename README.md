@@ -5,7 +5,7 @@ Value objects e validações para formulários (CPF, CNPJ, Email, Moeda, DatePic
 ## 📖 Documentação completa
 
 **Instalação, API, exemplos em Vue 3, React e Angular:**  
-**[Documentação principal →](docs/README.md)**
+**[Documentação principal →](https://github.com/weslanra/vality-core)**
 
 ## Instalação
 
@@ -22,5 +22,3 @@ const cpf = new Cpf("123.456.789-09");
 const email = new Email("usuario@exemplo.com");
 const moeda = new Moeda(1000);
 ```
-
-Antes de publicar no NPM, substitua `seu-usuario` na URL da documentação pelo seu usuário ou organização no GitHub.
