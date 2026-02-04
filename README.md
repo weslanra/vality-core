@@ -5,7 +5,7 @@ Value objects e validações para formulários (CPF, CNPJ, Email, Moeda, DatePic
 ## 📖 Documentação completa
 
 **Instalação, API, exemplos em Vue 3, React e Angular:**  
-**[Documentação principal no GitHub →](https://github.com/seu-usuario/vality-core/blob/main/docs/README.md)**
+**[Documentação principal →](docs/README.md)**
 
 ## Instalação
 
