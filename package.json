@@ -1,6 +1,6 @@
 {
   "name": "vality-core",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Value objects e validações para formulários (CPF, CNPJ, Email, Moeda, DatePicker, etc.)",
   "main": "dist/index.js",
   "module": "dist/index.js",
