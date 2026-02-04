@@ -10,6 +10,9 @@
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "jest",
@@ -25,7 +28,17 @@
     "form",
     "brazil"
   ],
-  "author": "",
+  "author": "Weslan Alves (https://github.com/weslanra)",
+  "contributors": [
+    {
+      "name": "Bárbara Mota Santana",
+      "url": "https://www.linkedin.com/in/barbaramotasantana/"
+    },
+    {
+      "name": "Lucas Tenório",
+      "url": "https://www.linkedin.com/in/tenorio-lucas/"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.12",
