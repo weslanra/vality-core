@@ -1,7 +1,13 @@
 import { ICnpj } from "../types";
 import { isEmpty } from "../utils";
 
-// TODO: Ajustar classe para o valueof ser uma função
+const TAMANHO_CNPJ = 14;
+
+/**
+ * DOCS: https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/perguntas-e-respostas/cnpj/cnpj-alfanumerico.pdf
+ * 
+ * NOTE: Essa classe foi contruida com base na documentação da receita federal
+ */
 export default class Cnpj implements ICnpj {
   private _valor: string;
   private _ehValido: true | string = true;
@@ -33,11 +39,14 @@ export default class Cnpj implements ICnpj {
   }
 
   private static sanitizar(valor: string): string {
-    return valor.replace(/[^0-9]/g, "");
+    return valor
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "")
+      .slice(0, TAMANHO_CNPJ);
   }
 
   public static formatar(valor: string): string {
-    const cnpjSanitizado = this.sanitizar(valor);
+    const cnpjSanitizado = Cnpj.sanitizar(valor);
     let cnpjFormatado = cnpjSanitizado;
 
     if (cnpjSanitizado.length > 2) {
@@ -64,45 +73,55 @@ export default class Cnpj implements ICnpj {
       this._ehValido = true;
       return;
     }
-    const cleanedValue = valor!.replace(/\D/g, ""); // Remove non-digit characters
-    if (cleanedValue.length === 14) {
-      // CNPJ validation
-      const cnpj = cleanedValue.padStart(14, "0");
-      let sum = 0;
-      let weight = 2;
 
-      for (let i = 11; i >= 0; i--) {
-        sum += parseInt(cnpj.charAt(i)) * weight;
-        weight = weight === 9 ? 2 : weight + 1;
-      }
+    const obterValorASCII = (c: string): number => {
+      const CHAR_CODE_ZERO = 48;
+      return c.charCodeAt(0) - CHAR_CODE_ZERO;
+    }
 
-      const mod = sum % 11;
-      const digit1 = mod < 2 ? 0 : 11 - mod;
-
-      if (parseInt(cnpj.charAt(12)) !== digit1) {
-        this._ehValido = "Insira um CNPJ válido";
-        return;
-      }
-
-      sum = 0;
-      weight = 2;
-
-      for (let i = 12; i >= 0; i--) {
-        sum += parseInt(cnpj.charAt(i)) * weight;
-        weight = weight === 9 ? 2 : weight + 1;
-      }
-
-      const mod2 = sum % 11;
-      const digit2 = mod2 < 2 ? 0 : 11 - mod2;
-
-      if (parseInt(cnpj.charAt(13)) !== digit2) {
-        this._ehValido = "Insira um CNPJ válido";
-        return;
-      }
-
-      this._ehValido = true;
+    const cnpj = Cnpj.sanitizar(valor!);
+    if(cnpj.length !== TAMANHO_CNPJ) {
+      this._ehValido = "Insira um CNPJ válido";
       return;
     }
-    this._ehValido = "Insira um CNPJ válido";
+
+    if(!/^[A-Z0-9]{12}\d{2}$/.test(cnpj)) {
+      this._ehValido = "Insira um CNPJ válido";
+      return;
+    }
+
+    let sum = 0;
+    let weight = 2;
+
+    for (let i = 11; i >= 0; i--) {
+      sum += obterValorASCII(cnpj.charAt(i)) * weight;
+      weight = weight === 9 ? 2 : weight + 1;
+    }
+
+    const mod = sum % 11;
+    const digit1 = mod < 2 ? 0 : 11 - mod;
+
+    if (obterValorASCII(cnpj.charAt(12)) !== digit1) {
+      this._ehValido = "Insira um CNPJ válido";
+      return;
+    }
+
+    sum = 0;
+    weight = 2;
+
+    for (let i = 12; i >= 0; i--) {
+      sum += obterValorASCII(cnpj.charAt(i)) * weight;
+      weight = weight === 9 ? 2 : weight + 1;
+    }
+
+    const mod2 = sum % 11;
+    const digit2 = mod2 < 2 ? 0 : 11 - mod2;
+
+    if (obterValorASCII(cnpj.charAt(13)) !== digit2) {
+      this._ehValido = "Insira um CNPJ válido";
+      return;
+    }
+
+    this._ehValido = true;
   }
 }

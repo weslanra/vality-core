@@ -99,9 +99,14 @@ describe("Validar valueObject CPF e CNPJ", () => {
     expect(CpfCnpjInstance.valor).toBe("30.208.494/0001-65");
   });
 
-  it("deve remover caracteres especiais e letras", () => {
-    const CpfInstance = new CpfCnpj("3ab.3@#.300-3045");
-    expect(CpfInstance.valor).toBe("333.003.045");
+  it("deve remover caracteres especiais mantendo apenas alfanuméricos", () => {
+    const CpfInstance = new CpfCnpj("333.003.00@4-5");
+    expect(CpfInstance.valor).toBe("333.003.004-5");
+  });
+
+  it("deve formatar como CNPJ quando há letras nos primeiros 9 caracteres após sanitizar", () => {
+    const instance = new CpfCnpj("3ab.3@#.300-3045");
+    expect(instance.valor).toBe("3a.b33.003/045");
   });
 
   it("deve retornar tipo CPF quando possui 11 caracteres", () => {
@@ -114,14 +119,24 @@ describe("Validar valueObject CPF e CNPJ", () => {
     expect(CnpjInstance.tipo).toBe("CNPJ");
   });
 
-  it("deve retornar tipo null quando não possui 14 ou 11 caracteres", () => {
-    const CnpjInstance = new CpfCnpj("1234567891234");
+  it("deve retornar tipo null quando possui menos de 11 caracteres sanitizados numéricos", () => {
+    const CnpjInstance = new CpfCnpj("123456789");
     expect(CnpjInstance.tipo).toBe(null);
   });
 
-  it("verificando validação feita no construtor", () => {
+  it("deve retornar tipo CNPJ quando possui entre 12 e 13 dígitos (tratado como CNPJ incompleto)", () => {
+    const instance = new CpfCnpj("1234567891234");
+    expect(instance.tipo).toBe("CNPJ");
+  });
+
+  it("deve validar entrada alfanumérica curta como tentativa de CNPJ", () => {
     const CnpjInstance = new CpfCnpj("sjdhsjhd");
-    expect(CnpjInstance.ehValido).toBe(true);
+    expect(CnpjInstance.ehValido).toBe("Insira um CNPJ válido");
+  });
+
+  it("deve rejeitar sequência numérica com tamanho diferente de 11 e 14", () => {
+    const instance = new CpfCnpj("12345678");
+    expect(instance.ehValido).toBe("Insira um CPF ou CNPJ válido");
   });
 
   it("deve formatar corretamente", () => {

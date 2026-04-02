@@ -34,9 +34,11 @@ export default class CpfCnpj implements ICpfCnpj {
 
   get tipo() {
     const valorSanitizado = CpfCnpj.sanitizar(this._valor);
-    if (valorSanitizado.length === 11) {
+    const contemLetra = /[A-Za-z]/.test(valorSanitizado.slice(0, 9));
+
+    if (valorSanitizado.length === 11 && !contemLetra) {
       return "CPF";
-    } else if (valorSanitizado.length === 14) {
+    } else if (valorSanitizado.length > 11 || contemLetra) {
       return "CNPJ";
     } else {
       return null;
@@ -44,7 +46,7 @@ export default class CpfCnpj implements ICpfCnpj {
   }
 
   private static sanitizar(valor: string): string {
-    return valor.replace(/[^0-9]/g, "");
+    return valor.replace(/[^A-Za-z0-9]/g, "");
   }
 
   private static formatarCpf(valor: string): string {
@@ -87,10 +89,12 @@ export default class CpfCnpj implements ICpfCnpj {
   }
 
   public static formatar(valor: string): string {
-    const valorSanitizado = this.sanitizar(valor);
+    const valorSanitizado = CpfCnpj.sanitizar(valor);
+    const contemLetra = /[A-Za-z]/.test(valorSanitizado.slice(0, 9));
+
     let valorFormatado = valorSanitizado;
 
-    if (valorSanitizado.length <= 11) {
+    if (valorSanitizado.length <= 11 && !contemLetra) {
       valorFormatado = this.formatarCpf(valorSanitizado);
     } else {
       valorFormatado = this.formatarCnpj(valorSanitizado);
@@ -105,12 +109,17 @@ export default class CpfCnpj implements ICpfCnpj {
       return;
     }
 
-    const cleanedValue = valor.replace(/\D/g, "");
-    if (cleanedValue.length === 11) {
+    const valorSanitizado = CpfCnpj.sanitizar(valor);
+    const contemLetra = /[A-Za-z]/.test(valorSanitizado.slice(0, 9));
+
+    if (valorSanitizado.length === 11 && !contemLetra) {
       const cpf = new Cpf(valor);
       this._ehValido = cpf.ehValido;
       return;
-    } else if (cleanedValue.length > 11 && cleanedValue.length <= 14) {
+    } else if (
+      contemLetra ||
+      valorSanitizado.length > 11 && valorSanitizado.length <= 14
+    ) {
       const cnpj = new Cnpj(valor);
       this._ehValido = cnpj.ehValido;
       return;

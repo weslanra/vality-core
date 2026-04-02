@@ -35,9 +35,16 @@ describe("Validar valueObject CNPJ", () => {
     expect(CnpjInstance.ehValido).toBe("Insira um CNPJ válido");
   });
 
-  it("deve remover caracteres especiais e letras", () => {
-    const CnpjInstance = new Cnpj("12c.def.ghi/jklm-np");
-    expect(CnpjInstance.valor).toBe("12");
+  it("deve remover caracteres especiais mantendo dígitos e letras válidas do CNPJ", () => {
+    const CnpjInstance = new Cnpj("30@208@494/0001-65");
+    expect(CnpjInstance.valor).toBe("30.208.494/0001-65");
+    expect(CnpjInstance.ehValido).toBe(true);
+  });
+
+  it("deve aceitar CNPJ alfanumérico válido (modelo Receita Federal)", () => {
+    const CnpjInstance = new Cnpj("19.JA2.KO8/Z001-51");
+    expect(CnpjInstance.ehValido).toBe(true);
+    expect(CnpjInstance.valueOf()).toBe("19JA2KO8Z00151");
   });
 
   it("deve ser válido se um CNPJ inválido for alterado para vazio", () => {
@@ -69,7 +76,7 @@ describe("Validar valueObject CNPJ", () => {
   });
 
   it("verificando validação feita no construtor", () => {
-    const CnpjInstance = new Cnpj("sjdhsjhd");
+    const CnpjInstance = new Cnpj("!@#$%¨&*()");
     expect(CnpjInstance.ehValido).toBe(true);
   });
 
