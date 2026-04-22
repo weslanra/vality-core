@@ -25,6 +25,11 @@ describe("Classe Numero", () => {
     expect(numero.valor).toBe("1.234,56");
   });
 
+  it("deve aceitar um valor percentual em string e formatá-lo corretamente", () => {
+    const numero = new Numero("2,1", { ...FORMATO_PADRAO, precision: 2 });
+    expect(numero.valor).toBe("2,10");
+  });
+
   it("deve aceitar um valor em string e formatá-lo corretamente", () => {
     const formato = {
       ...FORMATO_PADRAO,
