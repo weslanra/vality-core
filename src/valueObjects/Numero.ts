@@ -111,25 +111,60 @@ export default class Numero implements INumero {
     return valor;
   }
 
-  // TODO: Caso valor seja string, deve considerar o separador decimal caso exista e aplicar o formatador.precision corretamente
   public sanitizar(valor: number | string): number | null {
-    const { decimal } = this._formatador;
+    const { decimal, separator } = this._formatador;
     let valorLimite: number;
 
     if (typeof valor === "string") {
-      const ehNegativo = valor.trim().startsWith("-");
-      let valorSanitizado = valor.replace(/[^0-9]/g, "").replace(/^0+/, "");
+      const trimmed = valor.trim();
+      const ehNegativo = trimmed.startsWith("-");
+      let s = ehNegativo ? trimmed.slice(1).trim() : trimmed;
 
-      valorSanitizado = Numero.formatarValor(valorSanitizado, this._formatador);
+      const decimalIndex = s.lastIndexOf(decimal);
 
-      if (valorSanitizado === "") {
-        return null;
-      }
+      if (decimalIndex !== -1) {
+        let intRaw = s.slice(0, decimalIndex);
+        let fracRaw = s.slice(decimalIndex + decimal.length);
 
-      valorLimite = parseFloat(valorSanitizado.replace(decimal, "."));
+        if (separator) {
+          intRaw = intRaw.split(separator).join("");
+        }
+        intRaw = intRaw.replace(/[^0-9]/g, "");
+        fracRaw = fracRaw.replace(/[^0-9]/g, "");
 
-      if (ehNegativo) {
-        valorLimite = -valorLimite;
+        if (intRaw === "" && fracRaw === "") {
+          return null;
+        }
+
+        const intPart = intRaw === "" ? "0" : intRaw;
+        const numStr =
+          fracRaw.length > 0 ? `${intPart}.${fracRaw}` : intPart;
+        valorLimite = parseFloat(numStr);
+
+        if (Number.isNaN(valorLimite)) {
+          return null;
+        }
+
+        if (ehNegativo) {
+          valorLimite = -valorLimite;
+        }
+      } else {
+        let valorSanitizado = s.replace(/[^0-9]/g, "").replace(/^0+/, "");
+
+        valorSanitizado = Numero.formatarValor(
+          valorSanitizado,
+          this._formatador
+        );
+
+        if (valorSanitizado === "") {
+          return null;
+        }
+
+        valorLimite = parseFloat(valorSanitizado.replace(decimal, "."));
+
+        if (ehNegativo) {
+          valorLimite = -valorLimite;
+        }
       }
     } else {
       valorLimite = valor;
