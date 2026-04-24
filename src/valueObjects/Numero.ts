@@ -1,6 +1,6 @@
 import { INumero } from "../types";
 
-export interface Options {
+export interface NumeroOptions {
   prefix?: string;
   suffix?: string;
   separator: string;
@@ -13,7 +13,7 @@ export interface Options {
 /** Limites de dígitos para formatação (ex.: casas decimais) */
 export const LIMITE_DIGITO_NUMBER = { NOVE: 9 } as const;
 
-export const FORMATO_PADRAO: Options = {
+export const FORMATO_NUMERO_PADRAO: NumeroOptions = {
   decimal: ",",
   separator: ".",
   precision: 0,
@@ -29,14 +29,14 @@ function fixed(precision: number) {
 
 export default class Numero implements INumero {
   protected _valor!: string;
-  protected _formatador: Options;
+  protected _formatador: NumeroOptions;
   protected _ehValido: true | string = true;
 
   constructor(
     valor: string | number | null,
-    formatador: Partial<Options> = FORMATO_PADRAO
+    formatador: Partial<NumeroOptions> = FORMATO_NUMERO_PADRAO
   ) {
-    this._formatador = { ...FORMATO_PADRAO, ...formatador };
+    this._formatador = { ...FORMATO_NUMERO_PADRAO, ...formatador };
     this.valor = valor;
   }
 
@@ -89,7 +89,7 @@ export default class Numero implements INumero {
     return true;
   }
 
-  private static limitarValor(valor: number, options: Options): number {
+  private static limitarValor(valor: number, options: NumeroOptions): number {
     const { min = 0, max } = options;
 
     if (min !== undefined && valor < min) {
@@ -112,59 +112,54 @@ export default class Numero implements INumero {
   }
 
   public sanitizar(valor: number | string): number | null {
-    const { decimal, separator } = this._formatador;
+    const { decimal, prefix, suffix } = this._formatador;
+    const precision = this._formatador.precision ?? 0;
     let valorLimite: number;
 
     if (typeof valor === "string") {
-      const trimmed = valor.trim();
-      const ehNegativo = trimmed.startsWith("-");
-      let s = ehNegativo ? trimmed.slice(1).trim() : trimmed;
+      const ehNegativo = valor.trim().startsWith("-");
+      const ehDecimal = valor.trim().includes(decimal);
+      let casasDecimais = 0;
 
-      const decimalIndex = s.lastIndexOf(decimal);
+      // Verifica quantas casas decimais possui em valor
+      if (ehDecimal) {
+        casasDecimais = valor
+          .replace(prefix ?? "", "")
+          .replace(suffix ?? "", "")
+          .split(decimal)[1].length;
+      }
 
-      if (decimalIndex !== -1) {
-        let intRaw = s.slice(0, decimalIndex);
-        let fracRaw = s.slice(decimalIndex + decimal.length);
+      let valorSanitizado = valor.replace(/[^0-9]/g, "").replace(/^0+/, "");
+      if (casasDecimais > 0 && suffix) {
+        const base =
+          valorSanitizado.slice(0, valorSanitizado.length - casasDecimais) ||
+          "0";
+        const decimais = valorSanitizado
+          .slice(-casasDecimais)
+          .padStart(casasDecimais, "0");
 
-        if (separator) {
-          intRaw = intRaw.split(separator).join("");
+        if (casasDecimais < precision) {
+          // Se número de casas decimais for menor que precision, adiciona zeros à direita
+          valorSanitizado = `${base}${decimais.padEnd(precision, "0")}`;
+        } else if (casasDecimais > precision) {
+          // Se número de casas decimais for maior que precision, trunca/fica apenas os primeiros "precision" dígitos
+          valorSanitizado = `${base}${decimais.substring(0, precision)}`;
+        } else {
+          // Quando casasDecimais == precision, apenas concatena normal
+          valorSanitizado = `${base}${decimais}`;
         }
-        intRaw = intRaw.replace(/[^0-9]/g, "");
-        fracRaw = fracRaw.replace(/[^0-9]/g, "");
+      }
 
-        if (intRaw === "" && fracRaw === "") {
-          return null;
-        }
+      valorSanitizado = Numero.formatarValor(valorSanitizado, this._formatador);
 
-        const intPart = intRaw === "" ? "0" : intRaw;
-        const numStr =
-          fracRaw.length > 0 ? `${intPart}.${fracRaw}` : intPart;
-        valorLimite = parseFloat(numStr);
+      if (valorSanitizado === "") {
+        return null;
+      }
 
-        if (Number.isNaN(valorLimite)) {
-          return null;
-        }
+      valorLimite = parseFloat(valorSanitizado.replace(decimal, "."));
 
-        if (ehNegativo) {
-          valorLimite = -valorLimite;
-        }
-      } else {
-        let valorSanitizado = s.replace(/[^0-9]/g, "").replace(/^0+/, "");
-
-        valorSanitizado = Numero.formatarValor(
-          valorSanitizado,
-          this._formatador
-        );
-
-        if (valorSanitizado === "") {
-          return null;
-        }
-
-        valorLimite = parseFloat(valorSanitizado.replace(decimal, "."));
-
-        if (ehNegativo) {
-          valorLimite = -valorLimite;
-        }
+      if (ehNegativo) {
+        valorLimite = -valorLimite;
       }
     } else {
       valorLimite = valor;
@@ -175,7 +170,7 @@ export default class Numero implements INumero {
 
   public static aplicarSimbolos(
     valor: string,
-    options: Options = FORMATO_PADRAO
+    options: NumeroOptions = FORMATO_NUMERO_PADRAO
   ): string {
     let valorFormatado = valor;
 
@@ -208,7 +203,7 @@ export default class Numero implements INumero {
 
   public static formatarValor(
     valor: string,
-    options: Options = FORMATO_PADRAO
+    options: NumeroOptions = FORMATO_NUMERO_PADRAO
   ) {
     let valorFormatado = valor;
 
@@ -223,7 +218,7 @@ export default class Numero implements INumero {
     return valorFormatado;
   }
 
-  public static formatar(valor: string, options: Options = FORMATO_PADRAO) {
+  public static formatar(valor: string, options: NumeroOptions = FORMATO_NUMERO_PADRAO) {
     const valorFormatado = Numero.formatarValor(valor, options);
 
     return Numero.aplicarSimbolos(valorFormatado, options);

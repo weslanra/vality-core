@@ -2,30 +2,26 @@
 export type {
   DatePickerOptions,
   FormatFunction,
-  TimeLimiter,
-  ValidateFunction,
-  ValueOfFunction,
-  ToISOStringFunction,
+  TimeLimiter, ToISOStringFunction, ValidateFunction,
+  ValueOfFunction
 } from "./valueObjects/DatePicker/types";
 
-export { ValueObjects, ICpfCnpj, ICnpj, ICpf } from "./types";
-export type { INumero, IMoeda, IEmail, IPlaca, IDatePicker, INome } from "./types";
+export { ICnpj, ICpf, ICpfCnpj, ValueObjects } from "./types";
+export type { IDatePicker, IEmail, IMoeda, INome, INumero, IPlaca } from "./types";
 
 // Value Objects
-export { default as Cpf } from "./valueObjects/Cpf";
 export { default as Cnpj } from "./valueObjects/Cnpj";
+export { default as Cpf } from "./valueObjects/Cpf";
 export { default as CpfCnpj } from "./valueObjects/CpfCnpj";
+export { default as DatePicker } from "./valueObjects/DatePicker/DatePicker";
 export { default as Email } from "./valueObjects/Email";
-export { default as Moeda } from "./valueObjects/Moeda";
+export { FORMATO_MOEDA_PADRAO_BR, default as Moeda, type MoedaOptions } from "./valueObjects/Moeda";
 export { default as NomeCompleto } from "./valueObjects/NomeCompleto";
 export {
-  default as Numero,
-  LIMITE_DIGITO_NUMBER,
-  FORMATO_PADRAO,
-  type Options as NumeroOptions,
+  FORMATO_NUMERO_PADRAO, LIMITE_DIGITO_NUMBER, default as Numero, type NumeroOptions
 } from "./valueObjects/Numero";
 export { default as Placa } from "./valueObjects/Placa";
-export { default as DatePicker } from "./valueObjects/DatePicker/DatePicker";
 
 // Utilitários
 export { isEmpty } from "./utils";
+
