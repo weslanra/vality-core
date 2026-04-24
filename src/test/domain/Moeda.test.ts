@@ -1,6 +1,6 @@
 import Moeda, {
-  FORMATO_PADRAO_BR,
-  type Options,
+  FORMATO_MOEDA_PADRAO_BR,
+  type MoedaOptions,
 } from "@/valueObjects/Moeda";
 
 describe("Moeda com Objeto Formatador", () => {
@@ -18,13 +18,13 @@ describe("Moeda com Objeto Formatador", () => {
   });
 
   it("deve formatar o valor corretamente quando houver casas decimais", () => {
-    const moeda = new Moeda(200.34, FORMATO_PADRAO_BR);
+    const moeda = new Moeda(200.34, FORMATO_MOEDA_PADRAO_BR);
 
     expect(moeda.valor).toBe("R$ 200,34");
   });
 
   it("deve formatar o valor com options diferentes do padrao BR", () => {
-    const formatador: Options = {
+    const formatador: MoedaOptions = {
       decimal: ".",
       separator: ",",
       prefix: "$ ",
@@ -36,7 +36,7 @@ describe("Moeda com Objeto Formatador", () => {
   });
 
   it("deve formatar o valor com options diferentes do padrao BR - alterando precision", () => {
-    const formatador: Options = {
+    const formatador: MoedaOptions = {
       decimal: ".",
       separator: ",",
       prefix: "$ ",
@@ -48,7 +48,7 @@ describe("Moeda com Objeto Formatador", () => {
   });
 
   it("deve formatar o valor com options diferentes do padrao BR - alterando precision para 0", () => {
-    const formatador: Options = {
+    const formatador: MoedaOptions = {
       decimal: ".",
       separator: ",",
       prefix: "$ ",
@@ -67,7 +67,7 @@ describe("Moeda com Objeto Formatador", () => {
   });
 
   it("Deve forçar o valor mínimo quando o valor inserido for menor", () => {
-    const moeda = new Moeda(-150, FORMATO_PADRAO_BR);
+    const moeda = new Moeda(-150, FORMATO_MOEDA_PADRAO_BR);
     expect(moeda.valueOf()).toEqual(0);
   });
 
@@ -77,17 +77,17 @@ describe("Moeda com Objeto Formatador", () => {
   });
 
   it("deve sanitizar e converter uma string monetária corretamente", () => {
-    const moeda = new Moeda("R$ 1.234,56", FORMATO_PADRAO_BR);
+    const moeda = new Moeda("R$ 1.234,56", FORMATO_MOEDA_PADRAO_BR);
     expect(moeda.valueOf()).toBe(1234.56);
   });
 
   it("deve detectar quando a string sanitizada não é um número válido", () => {
-    const moeda = new Moeda("R$ ABC", FORMATO_PADRAO_BR);
+    const moeda = new Moeda("R$ ABC", FORMATO_MOEDA_PADRAO_BR);
     expect(moeda.valueOf()).toBe(0);
   });
 
   it("deve formatar o valor com o suffix", () => {
-    const formatador: Options = {
+    const formatador: MoedaOptions = {
       decimal: ",",
       separator: ".",
       prefix: "",

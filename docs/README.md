@@ -382,9 +382,9 @@ valor = new Moeda(0);
 ```vue
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { Numero, FORMATO_PADRAO } from "vality-core";
+import { Numero, FORMATO_NUMERO_PADRAO } from "vality-core";
 
-const numero = ref(new Numero(null, { ...FORMATO_PADRAO, precision: 2 }));
+const numero = ref(new Numero(null, { ...FORMATO_NUMERO_PADRAO, precision: 2 }));
 
 const numeroFormatado = computed(() => numero.value.valor);
 const numeroValido = computed(() => numero.value.ehValido === true);
@@ -401,10 +401,10 @@ const numeroValido = computed(() => numero.value.ehValido === true);
 
 ```tsx
 import { useState } from "react";
-import { Numero, FORMATO_PADRAO } from "vality-core";
+import { Numero, FORMATO_NUMERO_PADRAO } from "vality-core";
 
 export function FormNumero() {
-  const [numero] = useState(() => new Numero(null, { ...FORMATO_PADRAO, precision: 2 }));
+  const [numero] = useState(() => new Numero(null, { ...FORMATO_NUMERO_PADRAO, precision: 2 }));
   return (
     <>
       <input
@@ -422,8 +422,8 @@ export function FormNumero() {
 **Angular**
 
 ```ts
-import { FORMATO_PADRAO } from "vality-core";
-numero = new Numero(null, { ...FORMATO_PADRAO, precision: 2 });
+import { FORMATO_NUMERO_PADRAO } from "vality-core";
+numero = new Numero(null, { ...FORMATO_NUMERO_PADRAO, precision: 2 });
 ```
 
 ```html

@@ -1,7 +1,7 @@
 import { IMoeda } from "../types";
 import Numero from "./Numero";
 
-export interface Options {
+export interface MoedaOptions {
   prefix?: string;
   suffix?: string;
   separator: string;
@@ -11,7 +11,7 @@ export interface Options {
   max?: number;
 }
 
-export const FORMATO_PADRAO_BR: Options = {
+export const FORMATO_MOEDA_PADRAO_BR: MoedaOptions = {
   decimal: ",",
   separator: ".",
   prefix: "R$ ",
@@ -22,8 +22,8 @@ export const FORMATO_PADRAO_BR: Options = {
 export default class Moeda extends Numero implements IMoeda {
   constructor(
     valor: string | number | null,
-    formatador: Partial<Options> = FORMATO_PADRAO_BR
+    formatador: Partial<MoedaOptions> = FORMATO_MOEDA_PADRAO_BR
   ) {
-    super(valor, { ...FORMATO_PADRAO_BR, ...formatador });
+    super(valor, { ...FORMATO_MOEDA_PADRAO_BR, ...formatador });
   }
 }
