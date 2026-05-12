@@ -61,7 +61,7 @@ export default class DatePicker implements IDatePicker {
   }
 
   get valor(): string {
-    return this._valor;
+    return this._valor.trim();
   }
 
   set valor(v: string) {
