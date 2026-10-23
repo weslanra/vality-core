@@ -34,6 +34,13 @@ export interface IPlaca extends ValueObjects {
   validar(valor: string): void;
 }
 
+export interface IPhone extends ValueObjects {
+  valor: string;
+  formato: string;
+  valueOf(): string;
+  validar(valor: string): void;
+}
+
 export abstract class ICpfCnpj {
   abstract valor: string;
   abstract ehValido: true | string;
